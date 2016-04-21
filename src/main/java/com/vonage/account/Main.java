@@ -40,13 +40,16 @@ public class Main {
     CreateAccount create = new CreateAccount("1234", "ACME");
 
     CompletionStage<Object> cs = PatternsCS.ask(biz, create, 5000);
-    cs.thenRun(new Runnable() {
-      public void run() {
+    cs.whenComplete((r, e) -> {
+        if (e == null) {  // completed normally
+          System.out.println(r.toString());
+        } else {
+          System.err.println(e.toString());
+        }
         // shut down the actor system
         system.shutdown();
         system.awaitTermination();
-      }
-    });
+      });
   }
 
   public static void main(String[] args) throws Exception {

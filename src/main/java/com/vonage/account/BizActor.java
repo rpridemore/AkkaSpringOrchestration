@@ -61,7 +61,11 @@ public class BizActor extends AbstractLoggingActor { // would extend PersistentA
           }
           if (completedMap.size() == 3) {
             System.out.println("BizActor: all tasks completed");
-            sender.tell("BizActor completed successfully", self());
+            if (completedMap.entrySet().stream().allMatch(es -> es.getValue())) {
+              sender.tell("BizActor completed successfully", self());
+            } else {
+              sender.tell("BizActor completed with error(s)", self());
+            }
             context().stop(self());
           }
         })
